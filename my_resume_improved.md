@@ -1,0 +1,1 @@
+SKILLS & INTERESTS  Skills: Introductory experience with Python, conversationalknowledge of French, proficient with Microsoft Word, PowerPoint, and Excel, strong team player  Interests: Basketball, sports journalism, weightlifting, football,

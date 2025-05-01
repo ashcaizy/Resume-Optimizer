@@ -9,7 +9,7 @@ MODELS_DIR  = BASE_DIR / "models"
 HF_MODEL_EMBED = "sentence-transformers/all-MiniLM-L6-v2"
 
 # ↳ Seq2Seq model for resume rewriting (either local or HF Hub)
-HF_MODEL_GENERATION = "models/flant5-resume"
+HF_MODEL_GENERATION = "models/fast-flant5"
 
 # Generation & gap settings
 MAX_NEW_TOKENS = 512
