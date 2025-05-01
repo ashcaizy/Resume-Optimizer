@@ -60,7 +60,7 @@ if not st.session_state.scan_done:
     with col_resume:
         st.subheader("Resume")
         resume_text = st.text_area(
-            label="Paste resume text…",
+            label="Paste resume text OR Upload File below", 
             height=300,
             placeholder="Paste resume text here…"
         )
@@ -85,10 +85,9 @@ if not st.session_state.scan_done:
 
 # ── Results page ─────────────────────────────────────────────────────────────
 else:
-    # — Header + actions
     hdr, actions = st.columns([8,2])
     with hdr:
-        st.markdown("##### Resume scan results")
+        st.markdown("## Resume Scan Results")
         job_title = st.text_input("", "Tiktok - Product Manager")
     with actions:
         st.button("Track", use_container_width=True)
@@ -101,53 +100,123 @@ else:
     # — Left panel
     with left:
         st.plotly_chart(make_gauge(46), use_container_width=True)
-        # (no rescan implementation needed)
         st.button("⚡ Power Edit", use_container_width=True)
 
         def cat(name, pct, issues):
             st.markdown(f"**{name}** — {issues} issues to fix")
             st.progress(pct / 100)
 
-        cat("Searchability", 75, 2)
-        cat("Hard Skills", 20, 14)
-        cat("Soft Skills", 30, 5)
-        cat("Recruiter Tips", 60, 2)
+        cat("Experiences Match", 75, 2)
+        cat("Education Match", 20, 14)
+        cat("Skills Match", 30, 5)
 
     # — Right panel
     with right:
-        tabs = st.tabs(["Resume", "Job Description"])
+        st.markdown(
+    """
+    <style>
+    .stTabs [data-baseweb="tab"] {
+        font-size: 20px !important; /* Force the font size */
+        font-weight: bold !important; /* Force bold text */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+        tabs = st.tabs(["Resume", "Suggested Improvements"])
 
         with tabs[0]:
+
             st.markdown(
-                "## Searchability  "
+                "### Experiences Match"
                 "<span style='background:#495057;color:white;"
                 "padding:4px 8px;border-radius:4px;font-size:0.8rem;'>IMPORTANT</span>",
                 unsafe_allow_html=True
             )
             st.markdown(
-                "An ATS (Applicant Tracking System) is software used by 90% of companies and recruiters…  "
-                "**Tip:** Fix the red Xs to ensure your resume is easily searchable by recruiters and parsed correctly by the ATS."
+                "This section shows how well your previous experiences fit in this new role."
             )
 
             c1, c2 = st.columns([2,8])
             with c1:
-                st.markdown("**Contact Information**")
+                st.markdown("**Verb Match**")
+                st.markdown("**Project Match**")
             with c2:
-                st.markdown("✔ You provided your physical address.")
-                st.markdown("✔ You provided your email.")
-                st.markdown("✔ You provided your phone number.")
-            st.markdown("---")
+                st.markdown("✅ You mentioned verb like led, spearheaded.")
+                st.markdown("❌ You did not mention reltead project to product development.")
+
 
             c1, c2 = st.columns([2,8])
             with c1:
                 st.markdown("**Summary**")
             with c2:
                 st.markdown(
-                    "⚠️ We did not find a summary section on your resume. "
-                    "A summary helps recruiters grasp your qualifications quickly."
+                    "⚠️ You provided good experience in terms of action but not related projects. We suggest yuo add more information"
                 )
 
+            st.markdown("---")
+
+            st.markdown(
+                "### Education Match"
+                "<span style='background:#495057;color:white;"
+                "padding:4px 8px;border-radius:4px;font-size:0.8rem;'>IMPORTANT</span>",
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                "This section shows how well your current/ previous Education fit in this new role."
+            )
+            c3, c4 = st.columns([2,8])
+
+            with c3:
+                st.markdown("**Degree Level Match**")
+                st.markdown("**Major Match**")
+                
+            with c4:
+                st.markdown("✅ Your education matches the preferred (BS, MS, BA, BS) education listed in the job description.")
+                st.markdown("✅ Your Major matches the preferred (Computer Science, Math, Engineering) area of studies listed in the job description..")
+
+            st.markdown("---")
+
+            st.markdown(
+                "### Skills Match"
+                "<span style='background:#495057;color:white;"
+                "padding:4px 8px;border-radius:4px;font-size:0.8rem;'>IMPORTANT</span>",
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                "This section shows how well your hard and soft skills fit in this new role. Tip: Match the skills in your resume to the exact spelling in the job description. Prioritize skills that appear most frequently in the job description."
+            )
+            c5, c6 = st.columns([2,8])
+
+            with c5:
+                st.markdown("**Hard Skills Match**")
+                st.markdown(
+                    "✅ Product Management<br>"
+                    "✅ Good<br>"
+                    "❌ Python<br>"
+                    "❌ Excel<br>"
+                    "✅ CSS",
+                    unsafe_allow_html=True
+                )
+
+            with c6:
+                st.markdown("**Soft Skills Match**")
+                st.markdown(
+                    "✅ Communication<br>"
+                    "✅ Teamwork<br>"
+                    "❌ Leadership<br>"
+                    "❌ Problem-Solving<br>"
+                    "✅ Adaptability",
+                    unsafe_allow_html=True
+    )
+
+
+
         with tabs[1]:
+            st.markdown(
+                "<h2 style='font-size:26px; font-weight:bold; margin-bottom:0;'>How to Improve your Resume</h2>",
+                unsafe_allow_html=True
+            )
             st.markdown(
                 "_(Here you could highlight keywords from the job description and compare them to your resume.)_"
             )
