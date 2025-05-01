@@ -1,18 +1,30 @@
 from pathlib import Path
-import pdfplumber, docx, re
-
-def _clean(txt: str) -> str:
-    return re.sub(r"\s+", " ", txt).strip()
+import pdfplumber
+import docx
 
 def read_file(path: str | Path) -> str:
     path = Path(path)
     suffix = path.suffix.lower()
+
     if suffix == ".pdf":
+        # extract each page’s text (with line breaks)
+        pages = []
         with pdfplumber.open(path) as pdf:
-            text = " ".join((page.extract_text() or "") for page in pdf.pages)
+            for page in pdf.pages:
+                pages.append(page.extract_text() or "")
+        text = "\n".join(pages)
+
     elif suffix in {".docx", ".doc"}:
+        # extract each paragraph (preserves manual line breaks)
         doc = docx.Document(path)
-        text = " ".join(p.text for p in doc.paragraphs)
+        paras = [p.text for p in doc.paragraphs]
+        text = "\n".join(paras)
+
     else:
+        # plain text file
         text = path.read_text(encoding="utf-8")
-    return _clean(text)
+
+    # normalize line endings & strip trailing spaces, but keep blank lines
+    lines = text.splitlines()
+    cleaned = [ln.rstrip() for ln in lines]
+    return "\n".join(cleaned)

@@ -12,5 +12,6 @@ HF_MODEL_EMBED = "sentence-transformers/all-MiniLM-L6-v2"
 HF_MODEL_GENERATION = "models/fast-flant5"
 
 # Generation & gap settings
-MAX_NEW_TOKENS = 512
+MAX_NEW_TOKENS = 1200
+
 TOP_N_GAPS      = 20
