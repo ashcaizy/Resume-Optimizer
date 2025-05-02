@@ -13,10 +13,27 @@ st.set_page_config(
 if "scan_done" not in st.session_state:
     st.session_state.scan_done = False
 
-def start_scan():
+# ── Scan callback: save inputs to disk ─────────────────────────────────────────
+def start_scan(resume_text, uploaded_file, jd_text):
+    # ensure uploads directory exists
+    os.makedirs("uploads", exist_ok=True)
+    # save pasted resume text
+    if resume_text:
+        with open(os.path.join("uploads", "resume_text.txt"), "w", encoding="utf-8") as f:
+            f.write(resume_text)
+    # save uploaded resume file
+    if uploaded_file is not None:
+        save_path = os.path.join("uploads", "resume.pdf")  # Fixed name
+        with open(save_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+    # save job description text
+    if jd_text:
+        with open(os.path.join("uploads", "job_description.txt"), "w", encoding="utf-8") as f:
+            f.write(jd_text)
+    # flip view
     st.session_state.scan_done = True
 
-# ── Top bar ──────────────────────────────────────────────────────────────────
+# ── Top bar ───────────────────────────────────────────────────────────────────
 logo_col, _, premium_col = st.columns([2, 6, 1])
 with logo_col:
     logo_path = os.path.join(os.getcwd(), "logo.png")
@@ -26,7 +43,7 @@ with premium_col:
 
 st.markdown("---")
 
-# ── Gauge helper ───────────────────────────────────────────────────────────────
+# ── Gauge helper ──────────────────────────────────────────────────────────────
 def make_gauge(value: float):
     fig = go.Figure(
         go.Indicator(
@@ -52,7 +69,7 @@ def make_gauge(value: float):
     fig.update_layout(margin={"t":0,"b":0,"l":0,"r":0}, height=250)
     return fig
 
-# ── New Improvement form ─────────────────────────────────────────────────────
+# ── New Improvement form ──────────────────────────────────────────────────────
 if not st.session_state.scan_done:
     st.header("New Improvement")
     col_resume, col_jd = st.columns(2, gap="large")
@@ -62,28 +79,29 @@ if not st.session_state.scan_done:
         resume_text = st.text_area(
             label="Paste resume text OR Upload File below", 
             height=300,
-            placeholder="Paste resume text here…"
+            placeholder="Paste resume text here…",
         )
-        st.file_uploader(
+        uploaded_file = st.file_uploader(
             label="Drag & Drop or Upload",
-            type=["pdf", "docx", "txt"]
+            type=["pdf", "docx", "txt"],
         )
 
     with col_jd:
-        st.subheader("Job Description")
-        jd_text = st.text_area(
-            label="Copy and paste job description here",
+         st.subheader("Job Description")
+         jd_text = st.text_area(
+            "Copy and paste job description or URL link here",
             height=300,
-            placeholder="Paste job description here…"
+            placeholder="Paste job description here…",
         )
 
     st.button(
         "Start Scanning",
         on_click=start_scan,
+        args=(resume_text, uploaded_file, jd_text),
         use_container_width=True
     )
 
-# ── Results page ─────────────────────────────────────────────────────────────
+# ── Results page ──────────────────────────────────────────────────────────────
 else:
     hdr, actions = st.columns([8,2])
     with hdr:
@@ -143,7 +161,7 @@ else:
                 st.markdown("**Project Match**")
             with c2:
                 st.markdown("✅ You mentioned verb like led, spearheaded.")
-                st.markdown("❌ You did not mention reltead project to product development.")
+                st.markdown("❌ You did not mention related project to product development.")
 
 
             c1, c2 = st.columns([2,8])
@@ -151,7 +169,7 @@ else:
                 st.markdown("**Summary**")
             with c2:
                 st.markdown(
-                    "⚠️ You provided good experience in terms of action but not related projects. We suggest yuo add more information"
+                    "⚠️ You provided good experience in terms of action but not related projects. We suggest you add more information"
                 )
 
             st.markdown("---")
@@ -173,7 +191,7 @@ else:
                 
             with c4:
                 st.markdown("✅ Your education matches the preferred (BS, MS, BA, BS) education listed in the job description.")
-                st.markdown("✅ Your Major matches the preferred (Computer Science, Math, Engineering) area of studies listed in the job description..")
+                st.markdown("✅ Your Major matches the preferred (Computer Science, Math, Engineering) area of studies listed in the job description.")
 
             st.markdown("---")
 
@@ -210,11 +228,9 @@ else:
                     unsafe_allow_html=True
     )
 
-
-
         with tabs[1]:
             st.markdown(
-                "<h2 style='font-size:26px; font-weight:bold; margin-bottom:0;'>How to Improve your Resume</h2>",
+                "<h2 style='font-size:26px; font-weight:bold; margin-bottom:0;'>How to Improve your Resume </h2>",
                 unsafe_allow_html=True
             )
             st.markdown(
