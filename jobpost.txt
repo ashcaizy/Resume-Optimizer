@@ -1,0 +1,19 @@
+Software Engineer, TikTok Ads - USDS
+Location:
+New York
+Employment Type:
+Regular
+Job Code:
+A118110
+
+Responsibilities
+The Ads Infra team of US Tech Services works on building and running large-scale, globally distributed, fault-tolerant ads systems. SREs keep the systems up and running with the highest level of availability, ensuring our users have the best experience possible.  In order to enhance collaboration and cross-functional partnerships, among other things, at this time, our organization follows a hybrid work schedule that requires employees to work in the office 3 days a week, or as directed by their manager/department. We regularly review our hybrid work model, and the specific requirements may change at any time.  Responsibilities: • Responsible for the development of scalable and reliable systems aligned with product targets and requirements. • Build solutions within areas of lead ads management, CRM integration and ecosystem to lay the foundation of lead ads growth. • Collaborate with cross-functional teams to define products and drive initiatives from an engineering perspective.
+Qualifications
+Minimum Qualifications: • BS/MS degree in Computer Science, Computer Engineering or other relevant majors with 3+ years of work experience. • Excellent programming, debugging, and optimization skills in one or more general purpose programming languages including but not limited to: Go, C/C++, Python. • Ability to think critically and to formulate solutions to problems in a clear and concise way. • Extensive knowledge of modern software tech stack, including front-end applications, large-scale backend, and data pipeline.  Candidates for this position must be legally authorized to work in the United States. This position is not eligible for visa sponsorship or support.
+
+Qualifications
+Minimum Qualifications: • BS/MS degree in Computer Science, Computer Engineering or other relevant majors with 3+ years of work experience. • Excellent programming, debugging, and optimization skills in one or more general purpose programming languages including but not limited to: Go, C/C++, Python. • Ability to think critically and to formulate solutions to problems in a clear and concise way. • Extensive knowledge of modern software tech stack, including front-end applications, large-scale backend, and data pipeline.  Candidates for this position must be legally authorized to work in the United States. This position is not eligible for visa sponsorship or support.
+
+1. Interacting and occasionally having unsupervised contact with internal/external clients and/or colleagues;​
+2. Appropriately handling and managing confidential information including proprietary and trade secret information and access to information technology systems; and​
+3. Exercising sound judgment.​
