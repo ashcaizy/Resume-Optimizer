@@ -23,3 +23,4 @@ fpdf2 >= 1.0.0
 cloudscraper >= 1.2.0
 playwright
 bs4
+datasets
