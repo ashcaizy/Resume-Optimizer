@@ -190,11 +190,14 @@ def suggest_resume(
             out.append(line)
 
     # build markdown
-    header = [""]
-    #header += [f"- {k}" for k in keywords] if keywords else ["- NONE"]
-    #header += ["---", "## 📄 Revised Resume"]
+    header = ["## 🔑 Keywords / Skills to Consider Adding"]
+    header += [f"- {k}" for k in keywords] if keywords else ["- NONE"]
+    header += ["---", "## 📄 Revised Resume"]
 
     md = "\n".join(header + out)
+
+    md = md.encode("latin-1", "ignore").decode("latin-1")
+
     return md, keywords
 
 
