@@ -20,7 +20,8 @@ def analyze(
         typer.echo("Provide --job or --job-url", err=True)
         raise typer.Exit(1)
 
-    tf, sb = DualSimilarity().score(res_text, job_text)
+    #tf, sb = DualSimilarity().score(res_text, job_text)
+    tf, sb = DualSimilarity(hf_model="sentence-transformers/all-MiniLM-L6-v2").score(res_text, job_text)
     rich.print(f"[bold]TF‑IDF:[/] {tf:.3f}")
     rich.print(f"[bold]SBERT :[/] {sb:.3f}")
 
