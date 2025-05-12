@@ -1,27 +1,11 @@
-Mercor Graduate Fellowship
-$50,000 / one-time
-Fellowship · Any location
-Posted by mercor fellowship
-The Mercor Graduate Fellowship supports outstanding graduate students who are on-track to do exceptional work in their field (but who have not necessarily done so yet). Mercor works with thousands of graduate students across disciplines, so we deeply value graduate education.
+esponsibilities
+The Ads Infra team of US Tech Services works on building and running large-scale, globally distributed, fault-tolerant ads systems. SREs keep the systems up and running with the highest level of availability, ensuring our users have the best experience possible.  In order to enhance collaboration and cross-functional partnerships, among other things, at this time, our organization follows a hybrid work schedule that requires employees to work in the office 3 days a week, or as directed by their manager/department. We regularly review our hybrid work model, and the specific requirements may change at any time.  Responsibilities: • Responsible for the development of scalable and reliable systems aligned with product targets and requirements. • Build solutions within areas of lead ads management, CRM integration and ecosystem to lay the foundation of lead ads growth. • Collaborate with cross-functional teams to define products and drive initiatives from an engineering perspective.
+Qualifications
+Minimum Qualifications: • BS/MS degree in Computer Science, Computer Engineering or other relevant majors with 3+ years of work experience. • Excellent programming, debugging, and optimization skills in one or more general purpose programming languages including but not limited to: Go, C/C++, Python. • Ability to think critically and to formulate solutions to problems in a clear and concise way. • Extensive knowledge of modern software tech stack, including front-end applications, large-scale backend, and data pipeline.  Candidates for this position must be legally authorized to work in the United States. This position is not eligible for visa sponsorship or support.
 
-Who’s eligible: Current PhDs + postdocs in STEM (broadly defined—including but not limited to CS, math, statistics, economics, engineering, biology, chemistry, physics, etc).
+Qualifications
+Minimum Qualifications: • BS/MS degree in Computer Science, Computer Engineering or other relevant majors with 3+ years of work experience. • Excellent programming, debugging, and optimization skills in one or more general purpose programming languages including but not limited to: Go, C/C++, Python. • Ability to think critically and to formulate solutions to problems in a clear and concise way. • Extensive knowledge of modern software tech stack, including front-end applications, large-scale backend, and data pipeline.  Candidates for this position must be legally authorized to work in the United States. This position is not eligible for visa sponsorship or support.
 
-Apply in 15 minutes: The whole process is to upload a resume and spend 15 minutes chatting with Mercor’s AI interviewer at any time (no scheduling required). Don’t feel the need to prepare; it’s a purely behavioral interview that asks you to tell us about your research.
-
-AI interview, human evaluation: We think Mercor’s AI interviewer asks interesting questions that help evaluate candidates. But we know it’s not perfect. We will keep that in mind in our evaluation process (humans, not AI, will listen to the interviews and select the fellows).
-Benefit: Two fellows will receive a $50,000 fellowship, with no strings attached. We trust fellows to use the money wisely; you can choose whether the money goes to your university or whether you directly receive a check yourself. See this doc for FAQs.
-
-Referrals: Searching for talent is hard, so if you refer a winner, we’ll happily pay you $10,000. Refer your friends :)
-
-Community: We will organize an optional retreat for selected fellows to connect with other exceptional individuals.
-
-FAQs: see this doc.
-
-Deadline: We evaluate applications on a rolling basis:
-
-Round 1: apply by May 1st, 11:59 PM AoE.
-
-Round 2: apply by May 15th at 11:59 PM AoE.
-
-Earn $10000 by referring
-Share the referral link below, and earn $10000 for each selected fellow through this unique link. There's no limit on how many people you can refer. Restrictions may apply. Learn more
+1. Interacting and occasionally having unsupervised contact with internal/external clients and/or colleagues;​
+2. Appropriately handling and managing confidential information including proprietary and trade secret information and access to information technology systems; and​
+3. Exercising sound judgment.​
