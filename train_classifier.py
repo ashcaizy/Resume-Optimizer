@@ -57,7 +57,7 @@ args = TrainingArguments(
     eval_strategy="steps",    # newer alias for evaluation_strategy
     eval_steps=500,
     logging_steps=500,
-    num_train_epochs=3,
+    num_train_epochs=5,
     save_total_limit=1,
 )
 

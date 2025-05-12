@@ -4,8 +4,14 @@ from .data_loader import read_file
 from .similarity  import DualSimilarity
 from .suggester   import suggest_resume
 from .job_scraper  import fetch as fetch_job
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import torch
 
 app = typer.Typer(help="Resume Optimizer CLI")
+# Load the trained model and tokenizer
+model_path = "models/resume-fit"
+tokenizer = AutoTokenizer.from_pretrained(model_path)
+model = AutoModelForSequenceClassification.from_pretrained(model_path)
 
 @app.command()
 def analyze(
@@ -13,17 +19,33 @@ def analyze(
     job: Path     = typer.Option(None, help="Path to job description file"),
     job_url: str  = typer.Option(None, help="URL of online job posting"),
 ):
-    """Show similarity scores between RESUME and JOB."""
+    """Show similarity scores and compatibility prediction between RESUME and JOB."""
     res_text = read_file(resume)
     job_text = fetch_job(job_url) if job_url else read_file(job) if job else None
     if job_text is None:
         typer.echo("Provide --job or --job-url", err=True)
         raise typer.Exit(1)
 
-    #tf, sb = DualSimilarity().score(res_text, job_text)
+    # Calculate similarity scores
     tf, sb = DualSimilarity(hf_model="sentence-transformers/all-MiniLM-L6-v2").score(res_text, job_text)
     rich.print(f"[bold]TF‑IDF:[/] {tf:.3f}")
     rich.print(f"[bold]SBERT :[/] {sb:.3f}")
+
+    # Predict compatibility using the trained model
+    inputs = tokenizer(
+        res_text,
+        job_text,
+        truncation=True,
+        padding="max_length",
+        max_length=512,
+        return_tensors="pt",
+    )
+    with torch.no_grad():
+        outputs = model(**inputs)
+        logits = outputs.logits
+        predicted_class = torch.argmax(logits, dim=1).item()
+
+    rich.print(f"[bold green]Predicted Compatibility Class:[/] {predicted_class}")
 
 def _safe_break_line(line: str, max_len: int = 40) -> str:
     """
