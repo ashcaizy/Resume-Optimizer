@@ -61,6 +61,7 @@ async def analyze(resume: UploadFile, job: UploadFile):
             return_tensors="pt",
         )
         with torch.no_grad():
+            
             outputs = model(**inputs)
             logits = outputs.logits
             predicted_class = torch.argmax(logits, dim=1).item()
@@ -68,10 +69,20 @@ async def analyze(resume: UploadFile, job: UploadFile):
         # Generate suggestions using suggester.py
         markdown, keywords = suggest_resume(resume_text, job_text)
 
+        # Map predicted_class to descriptive string
+        if predicted_class == 0:
+            fit_level = "Not a Fit"
+        elif predicted_class == 1:
+            fit_level = "Potential Fit"
+        else:
+            fit_level = "Good Fit"
+
+        # Return the response
         return {
             "tf_idf_score": tf,
             "sbert_score": sb,
-            "predicted_class": predicted_class,
+            "predicted_class": predicted_class,  # Numeric class
+            "fit_level": fit_level,  # Descriptive string
             "suggestions_markdown": markdown,  # Include markdown in the response
             "missing_keywords": keywords,     # Include missing keywords
         }

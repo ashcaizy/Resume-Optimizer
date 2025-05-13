@@ -28,14 +28,14 @@ def start_scan(resume_text, uploaded_file, jd_text):
     # Save uploaded resume file
     resume_path = None
     if uploaded_file is not None:
-        st.write("Saving uploaded resume file...")
+        st.write("Parsing...")
         resume_path = os.path.join("uploads", uploaded_file.name)  # Save with original name
         with open(resume_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
 
     # Save job description text
     if jd_text:
-        st.write("Saving job description to file...")
+        st.write("Analyzing...")
         job_path = os.path.join("uploads", "job_description.txt")
         with open(job_path, "w", encoding="utf-8") as f:
             f.write(jd_text)
@@ -45,7 +45,7 @@ def start_scan(resume_text, uploaded_file, jd_text):
 
     # Send the resume and job description to the backend API
     if resume_path:
-        st.write("Sending files to backend API...")
+        st.write("Generating Result...")
         with open(resume_path, "rb") as resume_file, open(job_path, "rb") as job_file:
             response = requests.post(
                 "http://127.0.0.1:8000/analyze/",
@@ -57,10 +57,6 @@ def start_scan(resume_text, uploaded_file, jd_text):
             result = response.json()
             st.session_state.result = result  # Store the result in session state
             st.session_state.scan_done = True  # Set scan_done to True
-            st.write("### Analysis Results")
-            st.write(f"**TF-IDF Score:** {result['tf_idf_score']:.3f}")
-            st.write(f"**SBERT Score:** {result['sbert_score']:.3f}")
-            st.write(f"**Predicted Compatibility Class:** {result['predicted_class']}")
         else:
             st.error("Error: Could not process the request.")
     else:
@@ -158,9 +154,9 @@ else:
             st.markdown(f"**{name}** — {issues} issues to fix")
             st.progress(pct / 100)
 
-        cat("Experiences Match", 75, 2)
-        cat("Education Match", 20, 14)
-        cat("Skills Match", 30, 5)
+        cat("AI Model Match", 75, 2)
+        cat("Similarity Match", 20, 14)
+        cat("SBERT Match", 30, 5)
 
     # — Right panel
     with right:
@@ -186,23 +182,19 @@ else:
                 unsafe_allow_html=True
             )
             st.markdown(
-                "This section shows how well your previous experiences fit in this new role using our trianed AI model."
+                "This section shows how well your current resume in this new role using our trianed AI model based on trained dataset."
             )
 
             c1, c2 = st.columns([2,8])
             with c1:
                 st.markdown("**Match Class**")
-                st.markdown("**Project Match**")
             with c2:
                 # Display the Predicted Compatibility Class
                 if "result" in st.session_state:
-                    predicted_class = st.session_state.result["predicted_class"]
-                    st.markdown(f"**Predicted Compatibility Class:** {predicted_class}")
+                    fit_level = st.session_state.result["fit_level"]
+                    st.markdown(f"**Fit Level:** {fit_level}")
                 else:
                     st.markdown("No results available yet.")
-
-                st.markdown("✅ You mentioned verb like led, spearheaded.")
-                st.markdown("❌ You did not mention related project to product development.")
 
 
             c1, c2 = st.columns([2,8])
@@ -222,17 +214,18 @@ else:
                 unsafe_allow_html=True
             )
             st.markdown(
-                "This section shows how well your current/ previous Education fit in this new role."
+                "This section shows how well your current/ previous Education fit in this new role using standardized Cosine Similarities between your resume and job descritpion."
             )
             c3, c4 = st.columns([2,8])
 
             with c3:
-                st.markdown("**Degree Level Match**")
-                st.markdown("**Major Match**")
-                
+                st.markdown("**Match Score**")
             with c4:
-                st.markdown("✅ Your education matches the preferred (BS, MS, BA, BS) education listed in the job description.")
-                st.markdown("✅ Your Major matches the preferred (Computer Science, Math, Engineering) area of studies listed in the job description.")
+                if "result" in st.session_state:
+                    tf_idf_score = st.session_state.result["tf_idf_score"]
+                    st.markdown(f"**TF-IDF Score:** {tf_idf_score:.3f}")
+                else:
+                    st.markdown("No results available yet.")
 
             st.markdown("---")
 
@@ -248,35 +241,22 @@ else:
             c5, c6 = st.columns([2,8])
 
             with c5:
-                st.markdown("**Hard Skills Match**")
-                st.markdown(
-                    "✅ Product Management<br>"
-                    "✅ Good<br>"
-                    "❌ Python<br>"
-                    "❌ Excel<br>"
-                    "✅ CSS",
-                    unsafe_allow_html=True
-                )
-
+                st.markdown("**Match Score**")
             with c6:
-                st.markdown("**Soft Skills Match**")
-                st.markdown(
-                    "✅ Communication<br>"
-                    "✅ Teamwork<br>"
-                    "❌ Leadership<br>"
-                    "❌ Problem-Solving<br>"
-                    "✅ Adaptability",
-                    unsafe_allow_html=True
-    )
+                if "result" in st.session_state:
+                    sbert_score = st.session_state.result["sbert_score"]
+                    st.markdown(f"**BSERT Score:** {sbert_score:.3f}")
+                else:
+                    st.markdown("No results available yet.")
+
+
+
+
+
+           
 
         with tabs[1]:
-            
-            st.markdown(
-                "<h2 style='font-size:26px; font-weight:bold; margin-bottom:0;'>How to Improve your Resume </h2>",
-                unsafe_allow_html=True
-            )
             st.markdown(
                 "_(Here you could highlight keywords from the job description and compare them to your resume.)_"
             )
-            st.markdown("### Suggested Improvements")
             st.markdown(st.session_state.result["suggestions_markdown"], unsafe_allow_html=True)
