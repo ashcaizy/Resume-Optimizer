@@ -4,24 +4,27 @@ from .data_loader import read_file
 from .similarity  import DualSimilarity
 from .suggester   import suggest_resume
 from .job_scraper  import fetch as fetch_job
+from .config import HF_MODEL_EMBED
 
 app = typer.Typer(help="Resume Optimizer CLI")
 
 @app.command()
 def analyze(
     resume: Path,
-    job: Path     = typer.Option(None, help="Path to job description file"),
-    job_url: str  = typer.Option(None, help="URL of online job posting"),
+    job: Path = typer.Option(None),
+    job_url: str = typer.Option(None),
 ):
-    """Show similarity scores between RESUME and JOB."""
     res_text = read_file(resume)
-    job_text = fetch_job(job_url) if job_url else read_file(job) if job else None
-    if job_text is None:
-        typer.echo("Provide --job or --job-url", err=True)
+    if job_url:
+        job_text = fetch_job(job_url)
+    elif job:
+        job_text = read_file(job)
+    else:
+        typer.echo("Provide --job or --job-url")
         raise typer.Exit(1)
 
-    tf, sb = DualSimilarity().score(res_text, job_text)
-    rich.print(f"[bold]TF‑IDF:[/] {tf:.3f}")
+    tf, sb = DualSimilarity(HF_MODEL_EMBED).score(res_text, job_text)
+    rich.print(f"[bold]TF-IDF:[/] {tf:.3f}")
     rich.print(f"[bold]SBERT :[/] {sb:.3f}")
 
 def _safe_break_line(line: str, max_len: int = 40) -> str:

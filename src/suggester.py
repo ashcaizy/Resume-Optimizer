@@ -32,8 +32,10 @@ import logging
 import re
 from collections import Counter
 from typing import List, Tuple
+from pathlib import Path
 
 import spacy
+from fpdf import FPDF
 from .config import TOP_N_GAPS
 
 # --------------------------------------------------------------------------- #
@@ -49,7 +51,7 @@ _WORD_RE = re.compile(r"^[A-Za-z]{3,20}$")
 VOWELS = set("aeiouAEIOU")
 CONSONANT_RUN_RE = re.compile(r"[bcdfghjklmnpqrstvwxyz]{4,}", flags=re.I)
 
-BULLET_RE  = re.compile(r"^[\s]*[•▪\-o\*]")
+BULLET_RE  = re.compile(r"^[\s]*[-o\*•▪]")
 CONTACT_RE = re.compile(r"@|https?://|\b\d{3}[-\s]?\d{3}[-\s]?\d{4}\b")
 DIGIT_RE   = re.compile(r"\d")
 
@@ -83,9 +85,12 @@ CUE_TO_VERB = {
 
 def _looks_like_real_word(w: str) -> bool:
     """Filter out gibberish."""
-    if not _WORD_RE.match(w): return False
-    if not any(c in VOWELS for c in w): return False
-    if CONSONANT_RUN_RE.search(w): return False
+    if not _WORD_RE.match(w):
+        return False
+    if not any(c in VOWELS for c in w):
+        return False
+    if CONSONANT_RUN_RE.search(w):
+        return False
     return True
 
 
@@ -93,12 +98,12 @@ def _keyword_gaps(res: str, job: str, top: int) -> List[str]:
     """Extract up to top missing keywords (title‑cased)."""
     res_doc = nlp(res)
     job_doc = nlp(job)
-    res_lemmas = {t.lemma_.lower() for t in res_doc if t.pos_ in ("NOUN","PROPN")}
+    res_lemmas = {t.lemma_.lower() for t in res_doc if t.pos_ in ("NOUN", "PROPN")}
 
     candidates = [
         tok.text
         for tok in job_doc
-        if tok.pos_ in ("NOUN","PROPN")
+        if tok.pos_ in ("NOUN", "PROPN")
         and tok.is_alpha and not tok.is_stop
         and _looks_like_real_word(tok.text)
     ]
@@ -120,18 +125,19 @@ def _contains_word(line: str, word: str) -> bool:
 def _pick_action_verb(bullet: str) -> str | None:
     """Choose a custom action verb or None if already strong."""
     stripped = bullet.lstrip("•▪-*o ").strip()
-    if not stripped: return None
+    if not stripped:
+        return None
     fw = stripped.split()[0].rstrip(".,;:").lower()
-    if fw in ACTION_VERBS: return None
+    if fw in ACTION_VERBS:
+        return None
     low = bullet.lower()
     for cue, verb in CUE_TO_VERB.items():
         if cue in low:
             return verb
-    # fallback: pick pseudo‑random by hash
     return sorted(ACTION_VERBS)[abs(hash(bullet)) % len(ACTION_VERBS)]
 
 
-def _bullet_notes(line: str, kw: str|None) -> List[str]:
+def _bullet_notes(line: str, kw: str | None) -> List[str]:
     notes: List[str] = []
     if kw:
         notes.append(f'add "{kw}"')
@@ -156,10 +162,10 @@ def suggest_resume(
     """
     Generate markdown suggestions and missing keywords list.
     """
-    # ——— Strip out any existing suggestion block to avoid duplication ———
+    # strip out any existing suggestion block
     strip_re = re.compile(
         r"## 🔑 Keywords / Skills to Consider Adding[\s\S]*?## 📄 Revised Resume\n",
-        flags=re.MULTILINE
+        flags=re.MULTILINE,
     )
     resume_text = strip_re.sub("", resume_text, count=1)
 
@@ -168,13 +174,11 @@ def suggest_resume(
     out: List[str] = []
 
     for line in resume_text.splitlines():
-        # always skip contact and heading lines
         if CONTACT_RE.search(line) or line.strip().isupper():
             out.append(line)
             continue
 
-        # keyword injection only on bullets
-        kw_for_line: str|None = None
+        kw_for_line: str | None = None
         if remaining and BULLET_RE.match(line):
             for k in remaining:
                 if not _contains_word(line, k):
@@ -183,21 +187,16 @@ def suggest_resume(
                     break
 
         notes = _bullet_notes(line, kw_for_line) if BULLET_RE.match(line) else []
-
         if notes:
             out.append(f"{line}  [{'; '.join(notes)}]")
         else:
             out.append(line)
 
-    # build markdown
     header = ["## 🔑 Keywords / Skills to Consider Adding"]
     header += [f"- {k}" for k in keywords] if keywords else ["- NONE"]
     header += ["---", "## 📄 Revised Resume"]
 
     md = "\n".join(header + out)
-
-    md = md.encode("latin-1", "ignore").decode("latin-1")
-
     return md, keywords
 
 
@@ -205,3 +204,22 @@ def suggest_edits(resume_text: str, job_text: str) -> str:
     """Shim for CLI/Streamlit: returns only markdown."""
     md, _ = suggest_resume(resume_text, job_text)
     return md
+
+
+def markdown_to_pdf(md: str, out_path: str, font_path: str = "DejaVuSans.ttf"):
+    """
+    Dump the raw markdown into a PDF using a Unicode TTF font so that
+    characters like “❖” render correctly.
+    """
+    from pathlib import Path
+
+    font_path = Path("DejaVuSans.ttf")  # or use absolute path if needed
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.add_font("DejaVuSans", "", str(font_path), uni=True)
+    pdf.set_font("DejaVuSans", "", 12)
+
+    for line in md.splitlines():
+        pdf.multi_cell(0, 8, line)
+
+    pdf.output(out_path)
