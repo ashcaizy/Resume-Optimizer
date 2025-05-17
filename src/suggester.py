@@ -36,6 +36,17 @@ from typing import List, Tuple
 import spacy
 from .config import TOP_N_GAPS
 
+from typing import Tuple, List
+import torch
+import torch.nn.functional as F
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+
+# Load resume-fit model + tokenizer once (can be moved to a global init block)
+_model_path = "models/BERT2-resume-fit"
+_tokenizer = AutoTokenizer.from_pretrained(_model_path)
+_model = AutoModelForSequenceClassification.from_pretrained(_model_path)
+_model.eval()
+
 # --------------------------------------------------------------------------- #
 # spaCy setup
 # --------------------------------------------------------------------------- #
@@ -144,6 +155,25 @@ def _bullet_notes(line: str, kw: str|None) -> List[str]:
         notes.append("split into shorter bullet")
     return notes
 
+def _predict_fit(resume_text: str, job_text: str) -> Tuple[str, float]:
+    inputs = _tokenizer(
+        resume_text,
+        job_text,
+        return_tensors="pt",
+        truncation=True,
+        padding="max_length",
+        max_length=512,
+    )
+    with torch.no_grad():
+        outputs = _model(**inputs)
+        probs = F.softmax(outputs.logits, dim=1)
+        predicted_class = torch.argmax(probs, dim=1).item()
+        confidence = probs[0][predicted_class].item()
+
+    label_names = ["No Fit", "Fit"]  # index 0 → No Fit, index 1 → Fit
+    predicted_label = label_names[predicted_class]
+    return predicted_label, confidence
+
 # --------------------------------------------------------------------------- #
 # Core public API
 # --------------------------------------------------------------------------- #
@@ -162,6 +192,11 @@ def suggest_resume(
         flags=re.MULTILINE
     )
     resume_text = strip_re.sub("", resume_text, count=1)
+
+    # Predict fit score
+    # Predict fit score
+    fit_label, fit_conf = _predict_fit(resume_text, job_text)
+    fit_summary = f"**Model Predict Fit Score:** {fit_label} (confidence: {fit_conf:.2f})"
 
     keywords = _keyword_gaps(resume_text, job_text, top_n_keywords)
     remaining = keywords.copy()
@@ -190,7 +225,8 @@ def suggest_resume(
             out.append(line)
 
     # build markdown
-    header = ["## 🔑 Keywords / Skills to Consider Adding"]
+    header = ["## 🔍 Resume Fit Evaluation", fit_summary, ""]
+    header += ["## 🔑 Keywords / Skills to Consider Adding"]
     header += [f"- {k}" for k in keywords] if keywords else ["- NONE"]
     header += ["---", "## 📄 Revised Resume"]
 
